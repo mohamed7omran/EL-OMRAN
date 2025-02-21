@@ -1,45 +1,60 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { setItem, getItem } from "@/utils/storage"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { setItem, getItem } from "@/utils/storage";
 
 interface Employee {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
 interface DailyRecord {
-  id: number
-  employeeId: number
-  employeeName: string
-  amount: number
-  date: string
+  id: number;
+  employeeId: number;
+  employeeName: string;
+  amount: number;
+  date: string;
 }
 
 export default function DailyRecordsPage() {
-  const [employees, setEmployees] = useState<Employee[]>([])
-  const [selectedEmployee, setSelectedEmployee] = useState<string>("")
-  const [amount, setAmount] = useState<string>("")
-  const [dailyRecords, setDailyRecords] = useState<DailyRecord[]>([])
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [selectedEmployee, setSelectedEmployee] = useState<string>("");
+  const [amount, setAmount] = useState<string>("");
+  const [dailyRecords, setDailyRecords] = useState<DailyRecord[]>([]);
 
   useEffect(() => {
-    const savedEmployees = getItem("employees")
+    const savedEmployees = getItem("employees");
     if (savedEmployees) {
-      setEmployees(savedEmployees)
+      setEmployees(savedEmployees);
     }
-    const savedDailyRecords = getItem("dailyRecords")
+    const savedDailyRecords = getItem("dailyRecords");
     if (savedDailyRecords) {
-      setDailyRecords(savedDailyRecords)
+      setDailyRecords(savedDailyRecords);
     }
-  }, [])
+  }, []);
 
   const recordEntry = () => {
     if (selectedEmployee && amount) {
-      const employee = employees.find((e) => e.id.toString() === selectedEmployee)
+      const employee = employees.find(
+        (e) => e.id.toString() === selectedEmployee
+      );
       if (employee) {
         const newRecord = {
           id: dailyRecords.length + 1,
@@ -47,23 +62,25 @@ export default function DailyRecordsPage() {
           employeeName: employee.name,
           amount: Number.parseFloat(amount),
           date: new Date().toISOString().split("T")[0],
-        }
-        const updatedRecords = [...dailyRecords, newRecord]
-        setDailyRecords(updatedRecords)
-        setItem("dailyRecords", updatedRecords)
+        };
+        const updatedRecords = [...dailyRecords, newRecord];
+        setDailyRecords(updatedRecords);
+        setItem("dailyRecords", updatedRecords);
 
         // Update employee's attendance days
         const updatedEmployees = employees.map((emp) =>
-          emp.id === employee.id ? { ...emp, attendanceDays: emp.attendanceDays + 1 } : emp,
-        )
-        setEmployees(updatedEmployees)
-        setItem("employees", updatedEmployees)
+          emp.id === employee.id
+            ? { ...emp, attendanceDays: emp.attendanceDays + 1 }
+            : emp
+        );
+        setEmployees(updatedEmployees);
+        setItem("employees", updatedEmployees);
 
-        setAmount("")
-        setSelectedEmployee("")
+        setAmount("");
+        setSelectedEmployee("");
       }
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -109,6 +126,5 @@ export default function DailyRecordsPage() {
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }
-

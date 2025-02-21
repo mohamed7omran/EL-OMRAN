@@ -1,21 +1,21 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import Link from "next/link"
+import type React from "react";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import Link from "next/link";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "EL OMRAN",
   description: "Employee Management System",
-    generator: 'v0.dev'
-}
+  generator: "v0.dev",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -26,7 +26,7 @@ export default function RootLayout({
               <h1 className="text-2xl font-bold">EL OMRAN</h1>
               <ul className="flex space-x-4">
                 <li>
-                  <Link href="/" className="hover:text-gray-300">
+                  <Link href="/employees" className="hover:text-gray-300">
                     Employees
                   </Link>
                 </li>
@@ -45,14 +45,14 @@ export default function RootLayout({
           </header>
           <main className="flex-grow container mx-auto p-4">{children}</main>
           <footer className="bg-gray-800 text-white p-4">
-            <div className="container mx-auto text-center">© 2025 EL OMRAN. All rights reserved.</div>
+            <div className="container mx-auto text-center">
+              © 2025 EL OMRAN. All rights reserved.
+            </div>
           </footer>
         </div>
       </body>
     </html>
-  )
+  );
 }
 
-
-
-import './globals.css'
+import "./globals.css";
