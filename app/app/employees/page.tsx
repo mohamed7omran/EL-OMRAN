@@ -1,5 +1,6 @@
-"use client";
+// TODO: make select right
 
+"use client";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,13 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { setItem, getItem } from "@/utils/storage";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Employee {
   id: number;
@@ -39,6 +47,7 @@ const jobTypes = [
   "كوماندا نجارين",
   "كوماندا حدادين",
 ];
+
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [newEmployee, setNewEmployee] = useState<
@@ -48,6 +57,13 @@ export default function EmployeesPage() {
     JobType: "نجار",
     dailySalary: 0,
   });
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredEmployees = employees.filter(
+    (employee) =>
+      employee.name.includes(searchQuery) ||
+      employee.JobType.includes(searchQuery)
+  );
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
 
   useEffect(() => {
@@ -58,6 +74,16 @@ export default function EmployeesPage() {
   }, []);
 
   const addEmployee = () => {
+    const trimmedName = newEmployee.name.trim();
+    const isDuplicateName = employees.some((emp) => emp.name === trimmedName);
+    const isDuplicateJopType = employees.some(
+      (emp) => emp.JobType === newEmployee.JobType
+    );
+
+    if (isDuplicateName && isDuplicateJopType) {
+      alert("الاسم موجود ابحث عليه يامعلم!");
+      return;
+    }
     if (newEmployee.name && newEmployee.dailySalary > 0) {
       const employee: Employee = {
         id: employees.length + 1,
@@ -83,6 +109,8 @@ export default function EmployeesPage() {
   };
 
   const deleteEmployee = (id: number) => {
+    const confirmDelete = window.confirm("هل أنت متأكد من حذف هذا الموظف؟");
+    if (!confirmDelete) return;
     const updatedEmployees = employees.filter((emp) => emp.id !== id);
     setEmployees(updatedEmployees);
     setItem("employees", updatedEmployees);
@@ -90,19 +118,28 @@ export default function EmployeesPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Employees</h2>
+      <h2 className=" w-full text-center text-3xl font-semibold">الصنايعية</h2>
       <Dialog>
-        <DialogTrigger asChild>
-          <Button>Add New Employee</Button>
-        </DialogTrigger>
+        <div className="w-full p-2 flex justify-between items-center text-center">
+          <Input
+            type="text"
+            placeholder="ابحث عن الموظف..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-[500px] p-2 border rounded-md"
+          />
+          <DialogTrigger asChild>
+            <Button>اضافة صنايعي +</Button>
+          </DialogTrigger>
+        </div>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add New Employee</DialogTitle>
+            <DialogTitle>حط الصنايعي بتاعك</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-4 py-4" dir="rtl">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
-                Name
+                الاسم
               </Label>
               <Input
                 id="name"
@@ -115,7 +152,7 @@ export default function EmployeesPage() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="dailySalary" className="text-right">
-                Daily Salary
+                اليومية
               </Label>
               <Input
                 id="dailySalary"
@@ -132,28 +169,31 @@ export default function EmployeesPage() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="JobType" className="text-right">
-                Job Type
+                النوع
               </Label>
-              <select
-                id="JobType"
-                value={newEmployee.JobType}
-                onChange={(e) =>
-                  setNewEmployee({ ...newEmployee, JobType: e.target.value })
+              <Select
+                value={newEmployee?.JobType}
+                onValueChange={(value) =>
+                  setNewEmployee({ ...newEmployee, JobType: value })
                 }
-                className="col-span-3 p-2 border rounded-md"
               >
-                {jobTypes.map((job) => (
-                  <option key={job} value={job}>
-                    {job}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="col-span-3 p-2 border rounded-md text-right">
+                  <SelectValue placeholder="اختر النوع" />
+                </SelectTrigger>
+                <SelectContent>
+                  {jobTypes.map((job) => (
+                    <SelectItem key={job} value={job} className="text-right">
+                      {job}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
             <DialogClose asChild>
               <Button type="submit" onClick={addEmployee}>
-                Add Employee
+                اضافة صنايعي
               </Button>
             </DialogClose>
           </DialogFooter>
@@ -163,15 +203,15 @@ export default function EmployeesPage() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Daily Salary</TableHead>
-            <TableHead>job type</TableHead>
-            <TableHead>Attendance Days</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>الاسم</TableHead>
+            <TableHead>اليومية</TableHead>
+            <TableHead>النوع</TableHead>
+            <TableHead>الايام</TableHead>
+            <TableHead>احذف او عدل</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {employees.map((employee) => (
+          {filteredEmployees.map((employee) => (
             <TableRow key={employee.id}>
               <TableCell>{employee.name}</TableCell>
               <TableCell>${employee.dailySalary.toFixed(2)}</TableCell>
@@ -185,18 +225,18 @@ export default function EmployeesPage() {
                       className="mr-2"
                       onClick={() => setEditingEmployee(employee)}
                     >
-                      Edit
+                      تعديل
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Edit Employee</DialogTitle>
+                      <DialogTitle>عدل الصنايعي</DialogTitle>
                     </DialogHeader>
                     {editingEmployee && (
-                      <div className="grid gap-4 py-4">
+                      <div className="grid gap-4 py-4" dir="rtl">
                         <div className="grid grid-cols-4 items-center gap-4">
                           <Label htmlFor="edit-name" className="text-right">
-                            Name
+                            الاسم
                           </Label>
                           <Input
                             id="edit-name"
@@ -215,7 +255,7 @@ export default function EmployeesPage() {
                             htmlFor="edit-dailySalary"
                             className="text-right"
                           >
-                            Daily Salary
+                            اليوميه
                           </Label>
                           <Input
                             id="edit-dailySalary"
@@ -232,32 +272,35 @@ export default function EmployeesPage() {
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                           <Label htmlFor="edit-JobType" className="text-right">
-                            Job Type
+                            النوع
                           </Label>
-                          <select
-                            id="edit-JobType"
-                            value={editingEmployee.JobType}
-                            onChange={(e) =>
+                          <Select
+                            value={editingEmployee?.JobType}
+                            onValueChange={(value) =>
                               setEditingEmployee({
                                 ...editingEmployee,
-                                JobType: e.target.value,
+                                JobType: value,
                               })
                             }
-                            className="col-span-3 p-2 border rounded-md"
                           >
-                            {jobTypes.map((job) => (
-                              <option key={job} value={job}>
-                                {job}
-                              </option>
-                            ))}
-                          </select>
+                            <SelectTrigger className="col-span-3 p-2 border rounded-md">
+                              <SelectValue placeholder="اختر النوع" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {jobTypes.map((job) => (
+                                <SelectItem key={job} value={job}>
+                                  {job}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
                     )}
                     <DialogFooter>
                       <DialogClose asChild>
                         <Button type="submit" onClick={updateEmployee}>
-                          Update Employee
+                          عدل الصنايعي
                         </Button>
                       </DialogClose>
                     </DialogFooter>
@@ -267,7 +310,7 @@ export default function EmployeesPage() {
                   variant="destructive"
                   onClick={() => deleteEmployee(employee.id)}
                 >
-                  Delete
+                  حذف
                 </Button>
               </TableCell>
             </TableRow>

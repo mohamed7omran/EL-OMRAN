@@ -23,6 +23,7 @@ import { setItem, getItem } from "@/utils/storage";
 interface Employee {
   id: number;
   name: string;
+  attendanceDays?: number;
 }
 
 interface DailyRecord {
@@ -84,7 +85,7 @@ export default function DailyRecordsPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Daily Records</h2>
+      <h2 className="text-2xl font-bold">حط المصاريف</h2>
       <div className="flex space-x-4">
         <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
           <SelectTrigger className="w-[200px]">

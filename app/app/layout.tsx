@@ -27,17 +27,17 @@ export default function RootLayout({
               <ul className="flex space-x-4">
                 <li>
                   <Link href="/employees" className="hover:text-gray-300">
-                    Employees
+                    حط الصنايعي
                   </Link>
                 </li>
                 <li>
                   <Link href="/daily-records" className="hover:text-gray-300">
-                    Daily Records
+                    حط المصاريف
                   </Link>
                 </li>
                 <li>
                   <Link href="/reports" className="hover:text-gray-300">
-                    Reports
+                    التقارير
                   </Link>
                 </li>
               </ul>

@@ -116,13 +116,13 @@ export default function ReportsPage() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Employee</TableHead>
-            <TableHead>Daily Wage</TableHead>
-            <TableHead>Job type</TableHead>
-            <TableHead>Attendance Days</TableHead>
-            <TableHead>Total Wage</TableHead>
-            <TableHead>Paid Amount</TableHead>
-            <TableHead>Pending Salary</TableHead>
+            <TableHead>الاسم</TableHead>
+            <TableHead>اليومية</TableHead>
+            <TableHead>النوع</TableHead>
+            <TableHead>الايام</TableHead>
+            <TableHead>اجمالي القبض +المصاريف</TableHead>
+            <TableHead>المصاريف</TableHead>
+            <TableHead>اجمالي المستحق</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
