@@ -18,6 +18,7 @@ interface Employee {
   dailySalary: number;
   JobType: string;
   attendanceDays: number;
+  extraDays: number;
 }
 
 interface DailyRecord {
@@ -34,6 +35,8 @@ interface SalaryDetail {
   dailyWage: number;
   JobType: string;
   attendanceDays: number;
+  extraDays: number;
+  totalDays: number;
   totalWage: number;
   paidAmount: number;
   pendingSalary: number;
@@ -58,7 +61,8 @@ export default function ReportsPage() {
       const employeeRecords = dailyRecords.filter(
         (record) => record.employeeId === employee.id
       );
-      const totalWage = employee.dailySalary * employee.attendanceDays;
+      const totalDays = employee.attendanceDays + employee.extraDays || 0;
+      const totalWage = employee.dailySalary * totalDays;
       const paidAmount = employeeRecords.reduce(
         (sum, record) => sum + record.amount,
         0
@@ -70,6 +74,8 @@ export default function ReportsPage() {
         dailyWage: employee.dailySalary,
         JobType: employee.JobType,
         attendanceDays: employee.attendanceDays,
+        extraDays: employee.extraDays,
+        totalDays,
         totalWage,
         paidAmount,
         pendingSalary,
@@ -92,14 +98,14 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Reports</h2>
+      <h2 className="text-2xl font-bold">📊 التقارير</h2>
       <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardHeader>
             <CardTitle>اجمالي المصاريف</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{totalExpenses.toFixed(2)}</p>
+            <p className="text-2xl font-bold">{totalExpenses.toFixed(2)} EGP</p>
           </CardContent>
         </Card>
         <Card>
@@ -108,7 +114,7 @@ export default function ReportsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              {totalPendingSalaries.toFixed(2)}
+              {totalPendingSalaries.toFixed(2)} EGP
             </p>
           </CardContent>
         </Card>
@@ -116,25 +122,29 @@ export default function ReportsPage() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>الاسم</TableHead>
-            <TableHead>اليومية</TableHead>
-            <TableHead>النوع</TableHead>
-            <TableHead>الايام</TableHead>
+            <TableHead>👤 الاسم</TableHead>
+            <TableHead>💵 اليومية</TableHead>
+            <TableHead>👨‍💼 النوع</TableHead>
+            <TableHead>📅 الأيام</TableHead>
+            <TableHead>➕ الإضافي</TableHead>
+            <TableHead>الايام + الاضافي</TableHead>
             <TableHead>اجمالي القبض +المصاريف</TableHead>
-            <TableHead>المصاريف</TableHead>
-            <TableHead>اجمالي المستحق</TableHead>
+            <TableHead>💸 المصاريف</TableHead>
+            <TableHead>💰 اجمالي المستحق</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {salaryDetails.map((detail) => (
             <TableRow key={detail.employeeId}>
               <TableCell>{detail.employeeName}</TableCell>
-              <TableCell>${detail.dailyWage.toFixed(2)}</TableCell>
+              <TableCell>{detail.dailyWage.toFixed(2)} EGP</TableCell>
               <TableCell>{detail.JobType}</TableCell>
               <TableCell>{detail.attendanceDays}</TableCell>
-              <TableCell>${detail.totalWage.toFixed(2)}</TableCell>
-              <TableCell>${detail.paidAmount.toFixed(2)}</TableCell>
-              <TableCell>${detail.pendingSalary.toFixed(2)}</TableCell>
+              <TableCell>{detail.extraDays}</TableCell>
+              <TableCell>{detail.totalDays}</TableCell>
+              <TableCell>{detail.totalWage.toFixed(2)} EGP</TableCell>
+              <TableCell>{detail.paidAmount.toFixed(2)} EGP</TableCell>
+              <TableCell>{detail.pendingSalary.toFixed(2)} EGP</TableCell>
             </TableRow>
           ))}
         </TableBody>

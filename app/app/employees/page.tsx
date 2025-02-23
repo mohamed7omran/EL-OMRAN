@@ -1,4 +1,5 @@
 // TODO: make select right
+// TODO:عند مسح الموظف من صفحة الموظفين يبقي موجود في  المصاريف بس بيتمسح من التقارير
 
 "use client";
 import { useState, useEffect } from "react";
@@ -34,8 +35,9 @@ import {
 interface Employee {
   id: number;
   name: string;
-  dailySalary: number;
   JobType: string;
+  dailySalary: number;
+  extraDays: number;
   attendanceDays: number;
 }
 
@@ -56,6 +58,7 @@ export default function EmployeesPage() {
     name: "",
     JobType: "نجار",
     dailySalary: 0,
+    extraDays: 0,
   });
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -75,15 +78,15 @@ export default function EmployeesPage() {
 
   const addEmployee = () => {
     const trimmedName = newEmployee.name.trim();
-    const isDuplicateName = employees.some((emp) => emp.name === trimmedName);
-    const isDuplicateJopType = employees.some(
-      (emp) => emp.JobType === newEmployee.JobType
+    const isDuplicateEmployee = employees.some(
+      (emp) => emp.name === trimmedName && emp.JobType === newEmployee.JobType
     );
 
-    if (isDuplicateName && isDuplicateJopType) {
-      alert("الاسم موجود ابحث عليه يامعلم!");
+    if (isDuplicateEmployee) {
+      alert(`هذا الصنايعي مسجل بالفعل!`);
       return;
     }
+
     if (newEmployee.name && newEmployee.dailySalary > 0) {
       const employee: Employee = {
         id: employees.length + 1,
@@ -93,7 +96,12 @@ export default function EmployeesPage() {
       const updatedEmployees = [...employees, employee];
       setEmployees(updatedEmployees);
       setItem("employees", updatedEmployees);
-      setNewEmployee({ name: "", dailySalary: 0, JobType: "نجار" });
+      setNewEmployee({
+        name: "",
+        dailySalary: 0,
+        extraDays: 0,
+        JobType: "نجار",
+      });
     }
   };
 
